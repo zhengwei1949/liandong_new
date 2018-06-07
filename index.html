@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+    select{
+        width:140px;
+    }
+    </style>
+</head>
+<body>
+    <h3>全国城市三级联动</h3>
+    <div class="content">
+        <select name="" id="province_content">
+            <option value="">省份</option>
+        </select>
+        <select name="" id="city_content">
+            <option value="">地级市</option>
+        </select>
+        <select name="" id="">
+            <option value="">县级市</option>
+        </select>
+    </div>
+    <script src="./jquery.js"></script>
+    <script src="./template.js"></script>
+    <script type="text/template" id="province">
+        <option value="">省份</option>
+        {{each arr}}
+            <option value="{{$value['provinceID']}}">{{$value['province']}}</option>
+        {{/each}}
+    </script>
+    <script type="text/template" id="city">
+        <option value="">地级市</option>
+        {{each arr}}
+            <option value="{{$value['cityID']}}">{{$value['city']}}</option>
+        {{/each}}
+    </script>
+    <script>
+    $(function(){
+        $.ajax({
+            type: "get",
+            url: "/city/province.php",
+            dataType: "json",
+            success: function (response) {
+                // console.log(response);
+                // template('指定模板','指定数据【数据一定要是对象】')
+                var html = template('province',{arr:response});
+                // console.log(html);
+                $('#province_content').html(html);
+            }
+        });
+
+
+
+        $('#province_content').change(function(){
+            // console.log(11);
+            // console.log($(this).val());
+            $.ajax({
+                type: "get",
+                url: "/city/city.php",
+                data: {province_id:$(this).val()},
+                dataType: "json",
+                success: function (response) {
+                    // console.log(response);
+                    var html = template('city',{arr:response});
+                    $('#city_content').html(html);
+                }
+            });
+        })
+    })
+    </script>
+</body>
+</html>
